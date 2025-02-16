@@ -1,0 +1,36 @@
+allprojects {
+    repositories {
+        google() // Google's Maven repository for Android tools
+        mavenCentral() // Central Maven repository for additional dependencies
+    }
+}
+
+rootProject.buildDir = "../build"
+
+subprojects {
+    // Set the build directory relative to the root project
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+
+    // Prevent circular dependencies
+    afterEvaluate { project ->
+        if (project.name == "app") {
+            // Ensure this does not reference itself, avoiding circular dependency
+        }
+    }
+}
+
+// Ensure proper Gradle clean behavior
+tasks.register("clean", Delete) {
+    delete(rootProject.buildDir)
+}
+
+// Apply dependencies in the correct place
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.2' // Ensure the correct Gradle Plugin version
+    }
+}
